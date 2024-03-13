@@ -10,12 +10,18 @@ import 'chartjs-adapter-moment';
 // Import utilities
 import { formatValue } from '../utils/Utils';
 
+let tempFormatter = (value) => Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  maximumFractionDigits: 3,
+}).format(value);
+
 Chart.register(LineController, LineElement, Filler, PointElement, LinearScale, TimeScale, Tooltip);
 
 function LineChart01({
   data,
   width,
-  height
+  height,
+  x = false
 }) {
 
   const [chart, setChart] = useState(null)
@@ -55,7 +61,7 @@ function LineChart01({
           tooltip: {
             callbacks: {
               title: () => false, // Disable tooltip title
-              label: (context) => formatValue(context.parsed.y),
+              label: x != true ? (context) => formatValue(context.parsed.y): (context) => tempFormatter(context.parsed.y) + 'kWH',
             },
             bodyColor: darkMode ? tooltipBodyColor.dark : tooltipBodyColor.light,
             backgroundColor: darkMode ? tooltipBgColor.dark : tooltipBgColor.light,

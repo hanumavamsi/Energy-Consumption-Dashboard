@@ -12,10 +12,17 @@ import { tailwindConfig, formatValue } from '../utils/Utils';
 
 Chart.register(BarController, BarElement, LinearScale, TimeScale, Tooltip, Legend);
 
+let tempFormatter = (value) => Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  maximumFractionDigits: 3,
+}).format(value);
+
+
 function BarChart01({
   data,
   width,
-  height
+  height,
+  x=false,
 }) {
 
   const [chart, setChart] = useState(null)
@@ -47,7 +54,7 @@ function BarChart01({
             },
             ticks: {
               maxTicksLimit: 5,
-              callback: (value) => formatValue(value),
+              callback: x == false ? (value) => formatValue(value) : (value) => (tempFormatter(value) + 'kWH'),
               color: darkMode ? textColor.dark : textColor.light,
             },
             grid: {
@@ -81,7 +88,7 @@ function BarChart01({
           tooltip: {
             callbacks: {
               title: () => false, // Disable tooltip title
-              label: (context) => formatValue(context.parsed.y),
+              label:  x != true ? (context) => formatValue(context.parsed.y): (context) => tempFormatter(context.parsed.y) + 'kWH',
             },
             bodyColor: darkMode ? tooltipBodyColor.dark : tooltipBodyColor.light,
             backgroundColor: darkMode ? tooltipBgColor.dark : tooltipBgColor.light,
@@ -148,7 +155,7 @@ function BarChart01({
               label.style.fontSize = tailwindConfig().theme.fontSize.sm[0];
               label.style.lineHeight = tailwindConfig().theme.fontSize.sm[1].lineHeight;
               const theValue = c.data.datasets[item.datasetIndex].data.reduce((a, b) => a + b, 0);
-              const valueText = document.createTextNode(formatValue(theValue));
+              const valueText = x == false ? document.createTextNode(formatValue(theValue)) :  document.createTextNode(tempFormatter(theValue) + 'kWH');
               const labelText = document.createTextNode(item.text);
               value.appendChild(valueText);
               label.appendChild(labelText);

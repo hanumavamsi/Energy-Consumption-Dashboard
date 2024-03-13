@@ -12,10 +12,17 @@ import { tailwindConfig, formatValue } from '../utils/Utils';
 
 Chart.register(LineController, LineElement, Filler, PointElement, LinearScale, TimeScale, Tooltip);
 
+let tempFormatter = (value) => Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  maximumFractionDigits: 3,
+}).format(value);
+
+
 function LineChart02({
   data,
   width,
-  height
+  height,
+  x = false,
 }) {
 
   const [chart, setChart] = useState(null)
@@ -43,7 +50,7 @@ function LineChart02({
             beginAtZero: true,
             ticks: {
               maxTicksLimit: 5,
-              callback: (value) => formatValue(value),
+              callback: x == false ? (value) => formatValue(value) : (value) => tempFormatter(value) + 'kWH',
               color: darkMode ? textColor.dark : textColor.light,
             },
             grid: {
@@ -53,10 +60,10 @@ function LineChart02({
           x: {
             type: 'time',
             time: {
-              parser: 'MM-DD-YYYY',
+              parser: 'MM',
               unit: 'month',
               displayFormats: {
-                month: 'MMM YY',
+                month: 'MMM',
               },
             },
             border: {
@@ -79,7 +86,7 @@ function LineChart02({
           tooltip: {
             callbacks: {
               title: () => false, // Disable tooltip title
-              label: (context) => formatValue(context.parsed.y),
+              label: x == false? (context) => formatValue(context.parsed.y) : (context) => tempFormatter(context.parsed.y) + 'kWH',
             },
             bodyColor: darkMode ? tooltipBodyColor.dark : tooltipBodyColor.light,
             backgroundColor: darkMode ? tooltipBgColor.dark : tooltipBgColor.light,
@@ -173,10 +180,6 @@ function LineChart02({
     <React.Fragment>
       <div className="px-5 py-3">
         <div className="flex flex-wrap justify-between items-end">
-          <div className="flex items-start">
-            <div className="text-3xl font-bold text-slate-800 dark:text-slate-100 mr-2">$1,482</div>
-            <div className="text-sm font-semibold text-white px-1.5 bg-amber-500 rounded-full">-22%</div>
-          </div>
           <div className="grow ml-2 mb-1">
             <ul ref={legend} className="flex flex-wrap justify-end"></ul>
           </div>
