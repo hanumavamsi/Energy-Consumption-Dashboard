@@ -11,6 +11,7 @@ import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
+import PythonDashboard from './pages/PythonDashboard';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/new-script" element={<PythonDashboard />} />
       </Routes>
     </>
   );
